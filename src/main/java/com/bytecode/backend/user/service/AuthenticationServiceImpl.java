@@ -1,7 +1,6 @@
 package com.bytecode.backend.user.service;
 
 import com.bytecode.backend.exception.EmailAlreadyExistsException;
-import com.bytecode.backend.exception.InvalidCredentialsException;
 import com.bytecode.backend.user.dto.LoginRequest;
 import com.bytecode.backend.user.dto.LoginResponse;
 import com.bytecode.backend.user.dto.RegisterRequest;
