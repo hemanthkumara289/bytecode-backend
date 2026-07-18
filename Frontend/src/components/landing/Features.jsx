@@ -7,6 +7,7 @@ import {
   Building2,
   FlaskConical,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const features = [
   {
@@ -14,42 +15,53 @@ const features = [
     title: "Adaptive Authentication",
     description:
       "Authentication dynamically adapts based on real-time risk analysis.",
+    route: "/policies",
   },
   {
     icon: BrainCircuit,
     title: "Risk Engine",
     description:
       "AI-powered scoring evaluates every login request instantly.",
+    route: "/analytics",
   },
   {
     icon: SlidersHorizontal,
     title: "Policy Builder",
     description:
       "Create authentication rules without writing code.",
+    route: "/policies",
   },
   {
     icon: FileText,
     title: "Audit Logs",
     description:
       "Track every authentication event with detailed logs.",
+    route: "/audit-logs",
   },
   {
     icon: Building2,
     title: "Multi-Tenant",
     description:
       "Manage multiple organizations from one platform.",
+    route: "/applications",
   },
   {
     icon: FlaskConical,
     title: "Simulation",
     description:
       "Test authentication policies before deploying them.",
+    route: "/simulation",
   },
 ];
 
 export default function Features() {
+  const navigate = useNavigate();
+
   return (
-    <section className="py-24 bg-white">
+    <section
+      id="features"
+      className="bg-white py-24"
+    >
       <div className="mx-auto max-w-7xl px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -58,7 +70,7 @@ export default function Features() {
           transition={{ duration: 0.7 }}
           className="text-center"
         >
-          <p className="text-blue-600 font-semibold">
+          <p className="font-semibold text-blue-600">
             PLATFORM FEATURES
           </p>
 
@@ -66,10 +78,11 @@ export default function Features() {
             Everything you need to secure authentication
           </h2>
 
-          <p className="mt-5 text-slate-600 max-w-2xl mx-auto">
-            SecureAuth combines adaptive authentication, policy management,
-            risk analysis, simulations, and enterprise-grade audit logging
-            into one unified platform.
+          <p className="mx-auto mt-5 max-w-2xl text-slate-600">
+            SecureAuth combines adaptive authentication,
+            policy management, risk analysis, simulations,
+            and enterprise-grade audit logging into one
+            unified platform.
           </p>
         </motion.div>
 
@@ -90,7 +103,8 @@ export default function Features() {
                   delay: index * 0.1,
                 }}
                 viewport={{ once: true }}
-                className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm hover:shadow-xl transition-all"
+                onClick={() => navigate(feature.route)}
+                className="cursor-pointer rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition-all hover:border-blue-500 hover:shadow-xl"
               >
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100">
                   <Icon className="h-7 w-7 text-blue-600" />

@@ -1,8 +1,16 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Play, ShieldCheck, CheckCircle2 } from "lucide-react";
+import {
+  ArrowRight,
+  Play,
+  ShieldCheck,
+  CheckCircle2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const HeroContent = () => {
+  const navigate = useNavigate();
+
   return (
     <motion.div
       initial={{ opacity: 0, x: -40 }}
@@ -31,11 +39,12 @@ const HeroContent = () => {
         behavior—all without hardcoding authentication logic.
       </p>
 
-      {/* Buttons */}
+      {/* CTA Buttons */}
       <div className="mt-10 flex flex-wrap gap-4">
         <Button
           size="lg"
-          className="rounded-xl px-8 shadow-lg transition hover:-translate-y-1"
+          onClick={() => navigate("/login")}
+          className="rounded-xl px-8 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
         >
           Get Started
           <ArrowRight className="ml-2 h-4 w-4" />
@@ -44,7 +53,8 @@ const HeroContent = () => {
         <Button
           variant="outline"
           size="lg"
-          className="rounded-xl px-8"
+          onClick={() => navigate("/dashboard")}
+          className="rounded-xl px-8 transition-all duration-300 hover:-translate-y-1 hover:border-blue-600 hover:bg-blue-50 hover:text-blue-600"
         >
           <Play className="mr-2 h-4 w-4" />
           Live Demo
@@ -53,17 +63,17 @@ const HeroContent = () => {
 
       {/* Trust Indicators */}
       <div className="mt-10 flex flex-wrap gap-6 text-sm text-slate-600">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 transition hover:text-slate-900">
           <CheckCircle2 className="h-4 w-4 text-green-500" />
           Multi-Tenant
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 transition hover:text-slate-900">
           <CheckCircle2 className="h-4 w-4 text-green-500" />
           Adaptive MFA
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 transition hover:text-slate-900">
           <CheckCircle2 className="h-4 w-4 text-green-500" />
           Audit Ready
         </div>

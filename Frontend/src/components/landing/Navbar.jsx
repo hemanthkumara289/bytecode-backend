@@ -1,13 +1,30 @@
 import { ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
+  const navigate = useNavigate();
+
+  const scrollToSection = (id) => {
+    const section = document.getElementById(id);
+
+    if (section) {
+      section.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-        
+
         {/* Logo */}
-        <div className="flex items-center gap-3 cursor-pointer">
+        <div
+          onClick={() => navigate("/")}
+          className="flex cursor-pointer items-center gap-3 transition hover:opacity-80"
+        >
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow">
             <ShieldCheck size={22} />
           </div>
@@ -25,26 +42,43 @@ export default function Navbar() {
 
         {/* Navigation */}
         <nav className="hidden gap-8 md:flex">
-          <a href="#" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition">
+          <button
+            onClick={() => scrollToSection("features")}
+            className="text-sm font-medium text-slate-600 transition hover:text-blue-600"
+          >
             Features
-          </a>
+          </button>
 
-          <a href="#" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition">
+          <button
+            onClick={() => scrollToSection("how-it-works")}
+            className="text-sm font-medium text-slate-600 transition hover:text-blue-600"
+          >
             How it Works
-          </a>
+          </button>
 
-          <a href="#" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition">
+          <button
+            onClick={() => scrollToSection("documentation")}
+            className="text-sm font-medium text-slate-600 transition hover:text-blue-600"
+          >
             Documentation
-          </a>
+          </button>
         </nav>
 
         {/* Buttons */}
         <div className="flex items-center gap-3">
-          <Button variant="outline">
+          <Button
+            variant="outline"
+            onClick={() =>
+              window.open(
+                "https://github.com/DevOps-Tally/bytecode",
+                "_blank"
+              )
+            }
+          >
             GitHub
           </Button>
 
-          <Button>
+          <Button onClick={() => navigate("/login")}>
             Get Started
           </Button>
         </div>

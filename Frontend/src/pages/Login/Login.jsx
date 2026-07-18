@@ -13,24 +13,83 @@ import SecurityTips from "./components/SecurityTips";
 
 export default function Login() {
   const [step, setStep] = useState("login");
-
   const [currentUser, setCurrentUser] = useState(null);
-
   const [redirect, setRedirect] = useState(false);
+
+  // NEW
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [loginError, setLoginError] = useState("");
 
   const handleLogin = (email, password) => {
     const user = demoUsers[email];
 
+    // Invalid credentials
     if (!user || user.password !== password) {
-      alert("Invalid email or password.");
+      const attempts = failedAttempts + 1;
+      setFailedAttempts(attempts);
+
+      let risk = "LOW";
+      let score = 25;
+
+      if (attempts === 2) {
+        risk = "MEDIUM";
+        score = 60;
+      }
+
+      if (attempts >= 3) {
+        risk = "HIGH";
+        score = 95;
+      }
+
+      setCurrentUser({
+        device: "Unknown Device",
+        location: "Unknown Location",
+        risk,
+        score,
+        message: "Repeated invalid credentials detected.",
+        failedLogin: true,
+        attempts,
+      });
+
+      setLoginError("Invalid email or password.");
+
+      // Show popup for demo
+      window.alert(
+        `Invalid email or password.\n\nAdaptive Risk Score Increased to ${score}/100`
+      );
+
+      setStep("risk");
+
       return;
     }
 
-    setCurrentUser(user);
+    // Success
+    setLoginError("");
+    setFailedAttempts(0);
+
+    setCurrentUser({
+      ...user,
+      failedLogin: false,
+    });
+
     setStep("risk");
   };
 
   const handleRiskComplete = () => {
+    // Failed Login Flow
+    if (currentUser.failedLogin) {
+      if (currentUser.risk === "LOW") {
+        setStep("login");
+      } else if (currentUser.risk === "MEDIUM") {
+        setStep("mfa");
+      } else {
+        setStep("blocked");
+      }
+
+      return;
+    }
+
+    // Normal Flow
     if (currentUser.risk === "LOW") {
       setStep("success");
     } else if (currentUser.risk === "MEDIUM") {
@@ -55,14 +114,16 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center p-8">
       <div className="grid lg:grid-cols-2 gap-10 max-w-7xl w-full items-center">
-        {/* Left Side */}
         <LoginCard />
 
-        {/* Right Side */}
         <div className="space-y-6">
           {step === "login" && (
             <>
-              <LoginForm onLogin={handleLogin} />
+              <LoginForm
+                onLogin={handleLogin}
+                error={loginError}
+              />
+
               <SecurityTips />
             </>
           )}
@@ -88,9 +149,7 @@ export default function Login() {
           )}
 
           {step === "blocked" && (
-            <LoginBlocked
-              user={currentUser}
-            />
+            <LoginBlocked user={currentUser} />
           )}
         </div>
       </div>
