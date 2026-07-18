@@ -132,10 +132,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         application.getSecurityProfile()
                 );
 
+        // Save blocked login attempts before rejecting them
         if (!decision.isAllowLogin()) {
+
+            loginAttemptService.saveLoginAttempt(
+                    user,
+                    ipAddress,
+                    userAgent,
+                    false,
+                    riskResult.getRiskScore(),
+                    riskResult.getRiskLevel().name(),
+                    deviceFingerprint
+            );
+
             throw new IllegalStateException(decision.getReason());
         }
 
+        // Save successful login attempts
         loginAttemptService.saveLoginAttempt(
                 user,
                 ipAddress,
