@@ -1,5 +1,7 @@
 package com.bytecode.backend.user.service;
 
+import com.bytecode.backend.application.entity.ClientApplication;
+import com.bytecode.backend.application.repository.ClientApplicationRepository;
 import com.bytecode.backend.exception.EmailAlreadyExistsException;
 import com.bytecode.backend.loginattempt.service.LoginAttemptService;
 import com.bytecode.backend.otp.service.OtpService;
@@ -21,6 +23,7 @@ import com.bytecode.backend.user.dto.VerifyOtpRequest;
 import com.bytecode.backend.user.entity.Role;
 import com.bytecode.backend.user.entity.User;
 import com.bytecode.backend.user.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -49,6 +52,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationPolicyService authenticationPolicyService;
     private final OtpService otpService;
 
+    private final ClientApplicationRepository applicationRepository;
+
     @Override
     public RegisterResponse register(RegisterRequest request) {
 
@@ -76,6 +81,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public LoginResponse login(LoginRequest request,
                                HttpServletRequest httpRequest) {
+
+        // Validate Client Application
+        ClientApplication application = applicationRepository
+                .findByClientId(request.getClientId())
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Invalid Client ID"));
+
+        if (!application.isActive()) {
+            throw new IllegalStateException("Application is disabled.");
+        }
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -112,7 +127,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 riskEngineService.calculateRisk(riskContext);
 
         AuthenticationDecision decision =
-                authenticationPolicyService.evaluatePolicy(riskResult);
+                authenticationPolicyService.evaluatePolicy(
+                        riskResult,
+                        application.getSecurityProfile()
+                );
+
+        if (!decision.isAllowLogin()) {
+            throw new IllegalStateException(decision.getReason());
+        }
 
         loginAttemptService.saveLoginAttempt(
                 user,
