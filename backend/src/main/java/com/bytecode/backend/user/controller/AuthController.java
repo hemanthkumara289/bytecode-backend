@@ -4,8 +4,8 @@ import com.bytecode.backend.user.dto.LoginRequest;
 import com.bytecode.backend.user.dto.LoginResponse;
 import com.bytecode.backend.user.dto.RegisterRequest;
 import com.bytecode.backend.user.dto.RegisterResponse;
+import com.bytecode.backend.user.dto.VerifyOtpRequest;
 import com.bytecode.backend.user.service.AuthenticationService;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,5 +35,13 @@ public class AuthController {
 
         return ResponseEntity.ok(
                 authenticationService.login(request, httpServletRequest));
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<LoginResponse> verifyOtp(
+            @Valid @RequestBody VerifyOtpRequest request) {
+
+        return ResponseEntity.ok(
+                authenticationService.verifyOtp(request));
     }
 }
