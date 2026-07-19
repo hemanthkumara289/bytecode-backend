@@ -24,8 +24,6 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    // Set FRONTEND_URL as an env var on your backend host, e.g.
-    // https://your-app.vercel.app  (no trailing slash)
     @Value("${FRONTEND_URL:http://localhost:5173}")
     private String frontendUrl;
 
@@ -37,17 +35,21 @@ public class SecurityConfig {
 
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(auth -> auth
+
+                        // Health Check
+                        .requestMatchers("/", "/health").permitAll()
+
+                        // Authentication APIs
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // Uncomment this if only ADMINs should manage client applications
-                        // .requestMatchers("/api/applications/**").hasRole("ADMIN")
-
+                        // Allow preflight requests
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
+                        // Everything else requires JWT
                         .anyRequest().authenticated())
 
                 .addFilterBefore(
@@ -68,8 +70,8 @@ public class SecurityConfig {
                 "GET",
                 "POST",
                 "PUT",
-                "DELETE",
                 "PATCH",
+                "DELETE",
                 "OPTIONS"
         ));
 
