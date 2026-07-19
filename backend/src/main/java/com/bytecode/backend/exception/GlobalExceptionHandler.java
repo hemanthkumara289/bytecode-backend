@@ -72,10 +72,12 @@ public class GlobalExceptionHandler {
         public ResponseEntity<Map<String, Object>> handleGeneralException(
                         Exception ex) {
 
+                ex.printStackTrace(); // Print full stack trace to Render logs
+
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                                 Map.of(
                                                 "timestamp", LocalDateTime.now().toString(),
                                                 "status", HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                                                "error", "An unexpected error occurred"));
+                                                "error", ex.getClass().getName() + ": " + ex.getMessage()));
         }
 }
