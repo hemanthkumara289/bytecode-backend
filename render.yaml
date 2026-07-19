@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: bytecode-backend
+    runtime: java
+    rootDir: backend
+    buildCommand: ./mvnw clean package
+    startCommand: java -jar target/*.jar
+    plan: free
+    envVars:
+      - key: APP_NAME
+        sync: false
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRATION
+        sync: false
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
